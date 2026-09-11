@@ -42,7 +42,41 @@ Las imágenes se descargan en `output/` y también se imprimen las URLs.
 | `--nsfw` | Activa moderación de contenido |
 | `--watermark` | Marca de agua (solo seedream) |
 | `--json` | Salida JSON para scripting |
+| `--keep-metadata` | Conserva los metadatos (por defecto se limpian) |
 | `--list-models` | Lista el catálogo local |
+
+### Metadatos y C2PA
+
+Por defecto **toda imagen descargada se limpia de metadatos** antes de guardarse:
+manifiestos C2PA / Content Credentials (`APP11` JUMBF en JPEG, chunk `caBX` en PNG,
+chunk `C2PA` en WebP), Exif, XMP, IPTC y comentarios.
+
+Se conservan a propósito el **perfil ICC**, la **densidad/DPI**, la transparencia y la
+gamma — quitarlos cambiaría el color y el tamaño de impresión. La limpieza es sin
+recomprimir: los píxeles quedan bit a bit idénticos.
+
+```bash
+npm run strip -- output stickers      # limpia archivos ya existentes, in-place
+npm run strip -- --check .            # solo verifica, sale con código 1 si hay metadatos
+npm run gen -- "..." --keep-metadata  # desactiva la limpieza en una generación
+```
+
+Para que el repo lo exija en cada commit (una sola vez, y en cada clon nuevo):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+**Limitación conocida:** los contenedores AVIF/HEIC no se limpian (reescribir sus cajas
+`meta`/`iloc` puede romper el archivo). `--check` los marca como no soportados en vez de
+darlos por limpios. `frasco.png` de este repo es en realidad un AVIF, pese a la extensión.
+
+> Nota: esto elimina la declaración de procedencia que indica que la imagen fue generada
+> por IA. Sirve para producción de impresión, donde los metadatos no aportan nada y algunos
+> RIP fallan con ellos. No lo uses para presentar imágenes generadas por IA como obra humana
+> donde la divulgación importe — bancos de imágenes, concursos, prensa o cualquier sitio cuyos
+> términos exijan declararlo. Muchas plataformas además detectan el origen por otros medios
+> (marcas de agua invisibles tipo SynthID, clasificadores) que esto no toca.
 
 ### Ejemplos
 
@@ -86,6 +120,9 @@ src/apimart.js     cliente HTTP: crear tarea, polling, descarga
 src/models.js      catálogo de modelos y sus límites
 src/cli.js         interfaz de línea de comandos
 src/check.js       diagnóstico de configuración
+src/metadata.js    limpieza de metadatos (C2PA, Exif, XMP) sin recomprimir
+src/strip.js       CLI para limpiar/verificar archivos ya existentes
+.githooks/         pre-commit que bloquea imágenes con metadatos
 docs/apimart.md    resumen de la API (endpoints, parámetros, errores)
 output/            imágenes generadas
 ```

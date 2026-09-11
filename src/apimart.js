@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolveModel } from './models.js';
+import { stripMetadata } from './metadata.js';
 
 const DEFAULT_BASE_URL = 'https://api.apimart.ai/v1';
 
@@ -197,7 +198,10 @@ export function extractImageUrls(payload) {
   return [...new Set(out)];
 }
 
-export async function downloadImages(urls, { outDir = 'output', prefix = 'image' } = {}) {
+export async function downloadImages(
+  urls,
+  { outDir = 'output', prefix = 'image', stripMeta = true, onStrip } = {},
+) {
   fs.mkdirSync(outDir, { recursive: true });
   const saved = [];
   for (const [i, url] of urls.entries()) {
@@ -207,7 +211,15 @@ export async function downloadImages(urls, { outDir = 'output', prefix = 'image'
     }
     const ext = (new URL(url).pathname.match(/\.(png|jpe?g|webp)$/i)?.[1] ?? 'png').toLowerCase();
     const file = path.join(outDir, `${prefix}_${String(i + 1).padStart(2, '0')}.${ext}`);
-    fs.writeFileSync(file, Buffer.from(await res.arrayBuffer()));
+
+    let data = Buffer.from(await res.arrayBuffer());
+    if (stripMeta) {
+      const { buffer, removed } = stripMetadata(data);
+      data = buffer;
+      if (onStrip) onStrip({ file, removed });
+    }
+
+    fs.writeFileSync(file, data);
     saved.push(file);
   }
   return saved;

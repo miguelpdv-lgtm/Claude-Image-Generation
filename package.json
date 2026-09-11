@@ -10,6 +10,7 @@
   "scripts": {
     "gen": "node src/cli.js",
     "check": "node src/check.js",
+    "strip": "node src/strip.js",
     "models": "node src/cli.js --list-models"
   }
 }

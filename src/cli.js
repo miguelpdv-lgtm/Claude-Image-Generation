@@ -19,6 +19,7 @@ const { values, positionals } = parseArgs({
     out: { type: 'string', short: 'o' },
     name: { type: 'string' },
     'no-download': { type: 'boolean', default: false },
+    'keep-metadata': { type: 'boolean', default: false },
     nsfw: { type: 'boolean', default: false },
     watermark: { type: 'boolean', default: false },
     json: { type: 'boolean', default: false },
@@ -58,6 +59,7 @@ Opciones:
   -o, --out <dir>         Carpeta de salida (default: ${process.env.APIMART_OUTPUT_DIR || 'output'})
       --name <slug>       Prefijo del archivo (default: derivado del prompt)
       --no-download       Solo imprime las URLs, no descarga
+      --keep-metadata     Conserva metadatos (por defecto se limpian: C2PA, Exif, XMP)
       --nsfw              Activa moderacion de contenido (nsfw_check)
       --watermark         Marca de agua (solo modelos que lo soportan)
       --json              Salida en JSON (para scripting)
@@ -135,7 +137,14 @@ try {
   let files = [];
   if (!values['no-download']) {
     const prefix = values.name || slugify(prompt);
-    files = await downloadImages(result.urls, { outDir, prefix });
+    files = await downloadImages(result.urls, {
+      outDir,
+      prefix,
+      stripMeta: !values['keep-metadata'],
+      onStrip: ({ removed }) => {
+        if (removed.length) log(`  limpiado: ${removed.map((r) => r.name).join(', ')}`);
+      },
+    });
   }
 
   if (values.json) {

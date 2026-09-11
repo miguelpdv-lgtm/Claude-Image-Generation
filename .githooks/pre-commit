@@ -1,0 +1,15 @@
+#!/bin/sh
+# Bloquea el commit si alguna imagen staged conserva metadatos (C2PA, Exif, XMP).
+# Activar una sola vez:  git config core.hooksPath .githooks
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -Ei '\.(png|jpe?g|webp)$')
+[ -z "$files" ] && exit 0
+
+# shellcheck disable=SC2086
+if ! node src/strip.js --check $files; then
+  echo ""
+  echo "Hay imagenes con metadatos. Limpialas y vuelve a añadirlas:"
+  echo "  npm run strip -- $files"
+  echo "  git add $files"
+  exit 1
+fi

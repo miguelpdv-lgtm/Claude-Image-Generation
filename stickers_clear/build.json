@@ -1,0 +1,29 @@
+{
+  "canvas": [
+    3000,
+    2727
+  ],
+  "ratio": 1.1,
+  "items": [
+    {
+      "name": "01_pumpkin_king",
+      "motifs_placed": 17,
+      "ink_coverage": 0.0843
+    },
+    {
+      "name": "02_lost_bride",
+      "motifs_placed": 18,
+      "ink_coverage": 0.1055
+    },
+    {
+      "name": "03_lonely_creature",
+      "motifs_placed": 18,
+      "ink_coverage": 0.0962
+    },
+    {
+      "name": "04_strange_man",
+      "motifs_placed": 16,
+      "ink_coverage": 0.0935
+    }
+  ]
+}

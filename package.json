@@ -1,0 +1,15 @@
+{
+  "name": "apimart-image-generation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generacion de imagenes con la API de APIMart (https://api.apimart.ai)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "gen": "node src/cli.js",
+    "check": "node src/check.js",
+    "models": "node src/cli.js --list-models"
+  }
+}

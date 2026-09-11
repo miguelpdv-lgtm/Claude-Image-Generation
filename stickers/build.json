@@ -1,0 +1,30 @@
+{
+  "canvas": [
+    3000,
+    3158
+  ],
+  "ratio": 0.95,
+  "rise_frac_w": 0.3,
+  "items": [
+    {
+      "name": "03_lonely_creature",
+      "source": "9998211264571354-4646830e-1c70-45cd-95e2-ca748d77f11c-image_task_01M1WF160ZG7WW4SNS5QBAJMV1_0.png",
+      "content_w_px": 2284
+    },
+    {
+      "name": "04_strange_man",
+      "source": "9998211264590609-198cef4c-e79d-474c-b44e-395d0ee828c5-image_task_01M1WF0K751RVMJ91R5J49WE34_0.png",
+      "content_w_px": 2072
+    },
+    {
+      "name": "02_lost_bride",
+      "source": "9998211264605240-99f0672d-f016-4335-8d24-f5562ee98f99-image_task_01M1WF04XX51F39KAV21K0ZT0V_0.png",
+      "content_w_px": 1820
+    },
+    {
+      "name": "01_pumpkin_king",
+      "source": "9998211264622374-5f3def31-6c4a-48b5-8124-f7cace732ab8-image_task_01M1WEZM6FY4DA5MTNSH215VHE_0.png",
+      "content_w_px": 2400
+    }
+  ]
+}

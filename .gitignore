@@ -1,0 +1,10 @@
+.env
+.env.local
+node_modules/
+output/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyc.*

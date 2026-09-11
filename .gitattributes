@@ -1,0 +1,17 @@
+# Evita conversion de saltos de linea: este repo mezcla codigo y binarios
+* -text
+
+# Codigo y texto: normaliza a LF en el repo
+*.js   text eol=lf
+*.py   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+.gitignore     text eol=lf
+.env.example   text eol=lf
+
+# Binarios explicitos
+*.png  binary
+*.jpg  binary
+*.webp binary
+*.pdf  binary
+*.ai   binary

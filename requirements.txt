@@ -1,0 +1,16 @@
+# Dependencias de los scripts Python (src/*.py).
+# El CLI de generacion (src/*.js) NO necesita nada de esto: solo Node >= 20.
+#
+#   pip install -r requirements.txt
+#
+# Uso por script:
+#   arch_stickers.py / oval_stickers.py / clear_stickers.py -> Pillow, numpy, scipy
+#   vectorize.py                                            -> opencv-python, numpy
+#   jar_mockup.py                                            -> Pillow, numpy
+#   print_sheet.py                                           -> Pillow, reportlab
+
+Pillow>=10.0
+numpy>=1.26
+scipy>=1.11
+opencv-python-headless>=4.9
+reportlab>=4.0

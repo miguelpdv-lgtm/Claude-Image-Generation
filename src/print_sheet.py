@@ -23,13 +23,31 @@ FILES = [('01_pumpkin_king.png', 'THE PUMPKIN KING', '01 / 04'),
          ('04_strange_man.png', 'THE STRANGE MAN', '04 / 04')]
 
 
+# Directorios de fuentes por plataforma: Windows en local, Linux en el entorno cloud.
+FONT_DIRS = ['C:/Windows/Fonts',
+             '/usr/share/fonts/truetype/dejavu',
+             '/usr/share/fonts/truetype/liberation',
+             '/usr/share/fonts/truetype/msttcorefonts',
+             '/System/Library/Fonts/Supplemental']
+
+FONT_NAMES = {True:  ['arialbd.ttf', 'segoeuib.ttf', 'LiberationSans-Bold.ttf',
+                      'DejaVuSans-Bold.ttf', 'Arial Bold.ttf'],
+              False: ['arial.ttf', 'segoeui.ttf', 'LiberationSans-Regular.ttf',
+                      'DejaVuSans.ttf', 'Arial.ttf']}
+
+
 def font(size, bold=False):
-    for name in (['arialbd.ttf', 'segoeuib.ttf'] if bold else ['arial.ttf', 'segoeui.ttf']):
-        try:
-            return ImageFont.truetype(f'C:/Windows/Fonts/{name}', size)
-        except OSError:
-            continue
-    return ImageFont.load_default()
+    for name in FONT_NAMES[bold]:
+        for d in FONT_DIRS:
+            try:
+                return ImageFont.truetype(f'{d}/{name}', size)
+            except OSError:
+                continue
+    # Ultimo recurso: PIL busca en sus rutas por defecto antes de rendirse.
+    try:
+        return ImageFont.truetype(FONT_NAMES[bold][0], size)
+    except OSError:
+        return ImageFont.load_default()
 
 
 def dashed_ellipse(d, box, dash=14, gap=10, fill=(178, 178, 178), width=2):

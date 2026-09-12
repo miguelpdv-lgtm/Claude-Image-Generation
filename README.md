@@ -3,6 +3,15 @@
 Generación de imágenes por línea de comandos usando la API de [APIMart](https://apimart.ai).
 Sin dependencias externas: solo Node.js ≥ 20 (aquí: v22.20.0) y `fetch` nativo.
 
+## 0. Entorno cloud
+
+Para usarlo desde una sesión de Claude Code en la nube, ver **[`docs/cloud.md`](docs/cloud.md)**.
+En un clon nuevo (local o cloud):
+
+```bash
+bash scripts/setup.sh
+```
+
 ## 1. Configurar la API key
 
 Consigue la key en <https://apimart.ai/keys> y pégala en el archivo `.env`:
@@ -123,6 +132,10 @@ src/check.js       diagnóstico de configuración
 src/metadata.js    limpieza de metadatos (C2PA, Exif, XMP) sin recomprimir
 src/strip.js       CLI para limpiar/verificar archivos ya existentes
 .githooks/         pre-commit que bloquea imágenes con metadatos
+scripts/setup.sh   arranque en un clon nuevo (Node, hooks, API key)
+requirements.txt   dependencias Python (solo para los scripts de stickers/impresión)
+CLAUDE.md          instrucciones del proyecto para sesiones de Claude Code
+docs/cloud.md      configuración del entorno cloud
 docs/apimart.md    resumen de la API (endpoints, parámetros, errores)
 output/            imágenes generadas
 ```

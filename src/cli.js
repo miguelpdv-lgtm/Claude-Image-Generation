@@ -3,6 +3,7 @@
 //   npm run gen -- "un panda astronauta" --model seedream-4.5 --size 16:9
 import { parseArgs } from 'node:util';
 import path from 'node:path';
+import fs from 'node:fs';
 import { ApimartClient, ApimartError, downloadImages, loadEnv, slugify } from './apimart.js';
 import { MODELS, DEFAULT_MODEL, resolveModel } from './models.js';
 
@@ -16,6 +17,7 @@ const { values, positionals } = parseArgs({
     resolution: { type: 'string', short: 'r' },
     n: { type: 'string' },
     ref: { type: 'string', multiple: true },
+    'ref-file': { type: 'string', multiple: true },
     out: { type: 'string', short: 'o' },
     name: { type: 'string' },
     'no-download': { type: 'boolean', default: false },
@@ -55,7 +57,8 @@ Opciones:
   -s, --size <ratio>      Aspect ratio: 1:1, 16:9, 9:16, 4:3... o pixeles (1881x836 en gpt-image-2)
   -r, --resolution <t>    Nivel de salida: 1K / 2K / 4K segun el modelo
       --n <num>           Cuantas imagenes generar (segun limite del modelo)
-      --ref <url>         Imagen de referencia (repetible) -> modo image-to-image
+      --ref <url>         Imagen de referencia por URL (repetible) -> image-to-image
+      --ref-file <ruta>   Imagen de referencia desde disco (repetible); se envia como data URI
   -o, --out <dir>         Carpeta de salida (default: ${process.env.APIMART_OUTPUT_DIR || 'output'})
       --name <slug>       Prefijo del archivo (default: derivado del prompt)
       --no-download       Solo imprime las URLs, no descarga
@@ -89,6 +92,24 @@ const model = resolveModel(modelName);
 const outDir = values.out || process.env.APIMART_OUTPUT_DIR || 'output';
 const n = values.n ? Number(values.n) : 1;
 
+/** Las referencias locales viajan como data URI: la API las acepta igual que una URL. */
+const MIME_REF = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
+function refFromFile(ruta) {
+  const ext = path.extname(ruta).toLowerCase();
+  const mime = MIME_REF[ext];
+  if (!mime) {
+    console.error(`Error: --ref-file "${ruta}" no es png/jpg/webp.`);
+    process.exit(1);
+  }
+  if (!fs.existsSync(ruta)) {
+    console.error(`Error: --ref-file "${ruta}" no existe.`);
+    process.exit(1);
+  }
+  return `data:${mime};base64,${fs.readFileSync(ruta).toString('base64')}`;
+}
+
+const refs = [...(values.ref ?? []), ...(values['ref-file'] ?? []).map(refFromFile)];
+
 // Validaciones locales, para fallar antes de gastar creditos.
 const problems = [];
 if (model.sizes && values.size && !model.sizes.includes(values.size) && !/^\d+x\d+$/.test(values.size)) {
@@ -100,7 +121,7 @@ if (model.resolutions && values.resolution && !model.resolutions.includes(values
 if (model.maxN && (!Number.isInteger(n) || n < 1 || n > model.maxN)) {
   problems.push(`n debe estar entre 1 y ${model.maxN} para ${model.id}.`);
 }
-if (model.maxRefs && values.ref && values.ref.length > model.maxRefs) {
+if (model.maxRefs && refs.length > model.maxRefs) {
   problems.push(`maximo ${model.maxRefs} imagenes de referencia para ${model.id}.`);
 }
 if (problems.length) {
@@ -116,7 +137,7 @@ try {
   log(`\nModelo:  ${model.id}`);
   log(`Prompt:  ${prompt}`);
   log(`Ajustes: size=${values.size ?? model.defaults?.size ?? 'auto'} resolution=${values.resolution ?? model.defaults?.resolution ?? '-'} n=${n}`);
-  if (values.ref?.length) log(`Refs:    ${values.ref.length} imagen(es)`);
+  if (refs.length) log(`Refs:    ${refs.length} imagen(es)`);
   log('');
 
   const started = Date.now();
@@ -126,7 +147,7 @@ try {
     size: values.size,
     resolution: values.resolution,
     n,
-    imageUrls: values.ref,
+    imageUrls: refs.length ? refs : undefined,
     nsfwCheck: values.nsfw ? true : undefined,
     watermark: values.watermark ? true : undefined,
     onProgress: ({ status, progress }) => log(`  ... ${status} ${progress}%`),

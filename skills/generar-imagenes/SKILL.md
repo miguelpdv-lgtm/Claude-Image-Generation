@@ -23,9 +23,9 @@ commitea. Si el repo no está en la ruta actual, pregunta dónde está en vez de
 
 | Quieres… | Modelo | Por qué |
 | --- | --- | --- |
-| Una imagen desde cero | `seedream-4-5` | Buena relación calidad/precio, ~$0.026 |
-| **Conservar un producto, persona o logo de una foto real** | `gemini-3-pro-image-preview` | Es un modelo de *edición*: respeta el sujeto y su texto. ~$0.030 |
-| Un borrador barato | `gemini-2.5-flash-image-preview` | ~$0.0125, pero destroza el texto pequeño |
+| Una imagen desde cero | `seedream-4-5` | Buena relación calidad/precio, ~0,026 USD |
+| **Conservar un producto, persona o logo de una foto real** | `gemini-3-pro-image-preview` | Es un modelo de *edición*: respeta el sujeto y su texto. ~0,030 USD |
+| Un borrador barato | `gemini-2.5-flash-image-preview` | ~0,0125 USD, pero destroza el texto pequeño |
 
 La trampa que cuesta dinero: **seedream no edita, repinta el lienzo entero**. Si le pasas la foto de
 un producto y le pides "cambia sólo el fondo", te devolverá el fondo nuevo y el producto redibujado,
